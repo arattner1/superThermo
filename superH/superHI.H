@@ -107,7 +107,8 @@ inline Foam::scalar Foam::superH<EquationOfState>::limit
     const scalar T
 ) const
 {
-    return max(min(Tband_,T),-Tband_);
+    	return T;
+	//return max(min(Tband_,T),-Tband_);
 }
 
 
