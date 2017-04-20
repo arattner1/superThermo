@@ -1,0 +1,49 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.4.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 5); //(0 0 0);
+
+boundaryField
+{
+    BotWall
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+    OtherWalls
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+    Inlet
+    {
+		type				turbulentInlet;
+		referenceField		uniform (0 0 5);
+		fluctuationScale	(0.01 0.01 0.04); //(0.01 0.01 0.05); Changed from 0.05 to 0.04 to match the other references [Russo&Basse, 2016 and CFD-Wiki]
+		alpha				0.1;  
+	}
+    Outlet
+    {
+	// 	type			zeroGradient;
+    //    type            pressureInletOutletVelocity;
+    //    value           uniform (0 0 0);
+        type            fluxCorrectedVelocity;
+    }
+}
+
+// ************************************************************************* //

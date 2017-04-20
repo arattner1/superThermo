@@ -1,0 +1,118 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.4.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      thermophysicalProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+thermoType
+{
+    type            heRhoThermo;
+    mixture         pureMixture;
+ //   transport       const;
+    transport       superTransport;
+    thermo          superH;
+   equationOfState superEOS;
+ //  equationOfState perfectGas;
+ //   equationOfState PengRobinsonGas;
+    specie          specie;
+    energy          sensibleEnthalpy;
+}
+
+dpdt off;
+//pRef  1;
+
+mixture
+{
+    specie
+    {
+        nMoles          1;
+        molWeight       1; 
+    }
+    equationOfState
+    {
+        rhoLcoeff0			   604.5;    //  -
+		rhoLcoeff1			  -28.42;      //  -
+		rhoLcoeff2			  -1.122;      //  -
+		rhoLcoeff3			  -0.01971;      //  -
+		rhoLcoeff4			   -27.52;      //  -
+		rhoLcoeff5		      17.15;     //  -
+
+		rhoVcoeff0			   127.1;      //  -
+		rhoVcoeff1			  -0.1447;      //  -
+		rhoVcoeff2			   218.8;      //  -
+		rhoVcoeff3			  -0.006751;     //  -
+		rhoVcoeff4			   -0.0003885;      //  -
+		rhoVcoeff5			  141.8;      //  -
+        
+		Pcr                    7.377E6;    //  Pa
+	/*	Tc						308.4;
+		Vc						12;
+		Pc                    7.377E6;    //  Pa
+		omega					1.2;
+		Zc						1.05; */
+
+		Trcoeff0	    	  -290.1;      //  -
+		Trcoeff1			   0.9768;     //  -
+		Trcoeff2			  -1.174E-6;   //  -
+    }
+    thermodynamics
+    {
+        CpLcoeff0			    6822;       //  -
+		CpLcoeff1			    0.327;      //  -
+		CpLcoeff2			    9.263E4;    //  -
+		CpLcoeff3		    	2.61;       //  -
+		CpLcoeff4			   -119.1;      //  -
+		CpLcoeff5			   -1.08;       //  -
+
+		CpVcoeff0			    1.899E4;    //  -
+		CpVcoeff1			   -0.4352;     //  -
+		CpVcoeff2			    2971;       //  -
+		CpVcoeff3			   -0.01458;    //  -
+		CpVcoeff4			   -5719;       //  -
+		CpVcoeff5			   -207.5;      //  -
+    }
+    transport
+    {
+        muLcoeff0			    4.3994E-5;  //  -
+		muLcoeff1			   -3.4594E-6;  //  -
+		muLcoeff2			   -1.084E-7;   //  -
+		muLcoeff3		       -2.16E-9;    //  -
+		muLcoeff4			    5.1E-10;    //  -
+		muLcoeff5			   -1.0481;     //  -
+
+		muVcoeff0			    1.862E-5;   //  -
+		muVcoeff1			    5.35E-9;    //  -
+		muVcoeff2			    3.83E-10;   //  -
+		muVcoeff3			   -1.6E-12;    //  -
+		muVcoeff4			    1.8E-8;     //  -
+		muVcoeff5			   -1.0465;     //  -
+
+        PrLcoeff0			    3.031;      //  -
+		PrLcoeff1			    0.1488;     //  -
+		PrLcoeff2			    17.84;      //  -
+		PrLcoeff3		    	1.625;      //  -
+		PrLcoeff4			    3020;       //  -
+		PrLcoeff5			    1423;       //  -
+
+		PrVcoeff0			    5.617;      //  -
+		PrVcoeff1			   -0.6724;     //  -
+		PrVcoeff2			    1.743;      //  -
+		PrVcoeff3			   -0.1171;     //  -
+		PrVcoeff4			    0.136;      //  -
+		PrVcoeff5			   -0.9548;     //  -
+    } 
+}
+
+
+// ************************************************************************* //
