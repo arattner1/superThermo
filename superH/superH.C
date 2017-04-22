@@ -32,21 +32,17 @@ template<class equationOfState>
 Foam::superH<equationOfState>::superH(Istream& is)
 :
     equationOfState(is),
-    cpL_(readScalar(is)),
-    cpG_(readScalar(is)),
-    cpVF_(readScalar(is)),
-    TSpike_(readScalar(is)),
-    SpikeWidth_(readScalar(is)),
-    Tband_(readScalar(is))
+    cpL(readScalar(is)),
+    cpG(readScalar(is)),
+    TSpike(readScalar(is)),
+    SpikeWidth(readScalar(is)),
+    cpSpike(readScalar(is))
 {
     is.check("superH::superH(Istream& is)");
 
-    cpL_ *= this->W();
-    cpG_ *= this->W();
-    cpVF_ *= this->W();
-    TSpike_ *= this->W();
-    SpikeWidth_ *= this->W();
-    Tband_ *= this->W();
+    cpL  *= this->W();
+    cpG  *= this->W();
+    cpSpike *= this->W();
 }
 
 
@@ -54,19 +50,15 @@ template<class equationOfState>
 Foam::superH<equationOfState>::superH(const dictionary& dict)
 :
     equationOfState(dict),
-    cpL_(readScalar(dict.subDict("thermodynamics").lookup("cpL"))),
-    cpG_(readScalar(dict.subDict("thermodynamics").lookup("cpG"))),
-    cpVF_(readScalar(dict.subDict("thermodynamics").lookup("cpVariationFactor"))),
-    TSpike_(readScalar(dict.subDict("thermodynamics").lookup("cpSpike"))),
-    SpikeWidth_(readScalar(dict.subDict("thermodynamics").lookup("SpikeWidth"))),
-    Tband_(readScalar(dict.subDict("thermodynamics").lookup("Tband")))
+    cpL(readScalar(dict.subDict("thermodynamics").lookup("cpL"))),
+    cpG(readScalar(dict.subDict("thermodynamics").lookup("cpG"))),
+    TSpike(readScalar(dict.subDict("thermodynamics").lookup("TSpike"))),
+    SpikeWidth(readScalar(dict.subDict("thermodynamics").lookup("SpikeWidth"))),
+    cpSpike(readScalar(dict.subDict("thermodynamics").lookup("cpSpike")))
 {
-    cpL_ *= this->W();
-    cpG_ *= this->W();
-    cpVF_ *= this->W();
-    TSpike_ *= this->W();
-    SpikeWidth_ *= this->W();
-    Tband_ *= this->W();
+    cpL  *= this->W();
+    cpG  *= this->W();
+    cpSpike *= this->W();
 }
 
 
@@ -78,12 +70,11 @@ void Foam::superH<equationOfState>::write(Ostream& os) const
     equationOfState::write(os);
 
     dictionary dict("thermodynamics");
-    dict.add("cpL", cpL_/this->W());
-    dict.add("cpG", cpG_/this->W());
-    dict.add("cpVariationFactor", cpVF_/this->W());
-    dict.add("cpSpike", TSpike_/this->W());
-    dict.add("SpikeWidth", SpikeWidth_/this->W());
-    dict.add("Tband", Tband_/this->W());
+    dict.add("cpL", cpL/this->W());
+    dict.add("cpG", cpG/this->W());
+    dict.add("TSpike", TSpike);
+    dict.add("SpikeWidth", SpikeWidth);
+    dict.add("cpSpike", cpSpike/this->W());
     os  << indent << dict.dictName() << dict;
 }
 
@@ -98,12 +89,11 @@ Foam::Ostream& Foam::operator<<
 )
 {
     os  << static_cast<const equationOfState&>(ct)
-        << tab << ct.cpL_/ct.W()
-        << tab << ct.cpG_/ct.W()
-        << tab << ct.cpVF_/ct.W()
-        << tab << ct.TSpike_/ct.W()
-        << tab << ct.SpikeWidth_/ct.W()
-        << tab << ct.Tband_/ct.W();
+        << tab << ct.cpL/ct.W()
+        << tab << ct.cpG/ct.W()
+        << tab << ct.TSpike
+        << tab << ct.SpikeWidth
+        << tab << ct.cpSpike/ct.W();
 
     os.check("Ostream& operator<<(Ostream& os, const superH& ct)");
     return os;

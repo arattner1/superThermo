@@ -92,27 +92,25 @@ class superH
 {
     // Private data
 
-        scalar cpL_;
-        scalar cpG_;
-        scalar cpVF_;
-        scalar TSpike_;
-        scalar SpikeWidth_;
-        scalar Tband_;
+    scalar cpL;
+    scalar cpG;
+    scalar TSpike;
+    scalar SpikeWidth;
+    scalar cpSpike;
 
 
     // Private Member Functions
 
-        //- Construct from components
-        inline superH
-        (
-            const EquationOfState& st,
-            const scalar cpL,
-            const scalar cpG,
-            const scalar cpVF,
-            const scalar TSpike,
-            const scalar SpikeWidth,
-            const scalar Tband
-        );
+    //- Construct from components
+    inline superH
+    (
+        const EquationOfState& st,
+        const scalar cpL,
+        const scalar cpG,
+        const scalar TSpike,
+        const scalar SpikeWidth,
+        const scalar cpSpike
+    );
 
 
 public:
