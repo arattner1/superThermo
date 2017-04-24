@@ -32,6 +32,7 @@ License
 #include "thermo.H"
 
 #include "constTransport.H"
+#include "superTransport/superTransport.H"
 #include "sutherlandTransport.H"
 #include "PengRobinsonGas.H"
 #include "superEOS/superEOS.H"
@@ -53,6 +54,18 @@ makeThermo
     heRhoThermo,
     pureMixture,
     constTransport,
+    sensibleEnthalpy,
+    superH,
+    PengRobinsonGas,
+    specie
+);
+
+makeThermo
+(
+    rhoThermo,
+    heRhoThermo,
+    pureMixture,
+    superTransport,
     sensibleEnthalpy,
     superH,
     PengRobinsonGas,
