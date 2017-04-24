@@ -1,0 +1,116 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+//For m4 preprocessing
+
+
+
+
+//Some dimensions here
+             //Square channel width
+	      //Domain length
+               //Number of cells across (radial direction)
+               //Number of cells across (radial direction)
+           //Expansion ratio in x-direction
+
+convertToMeters 1;
+
+vertices        
+(
+	//Back face
+	(0                   -0.00025           0)      //00
+	(0.00025           -0.00025           0)      //01
+	(0.00025           0                    0)      //02
+	(0                   0                    0)      //03
+	(0.00025           0.00025            0)      //04
+	(0                   0.00025            0)      //05
+	//Front face
+	(0                   -0.00025           0.015)      //06
+	(0.00025           -0.00025           0.015)      //07
+	(0.00025           0                    0.015)      //08
+	(0                   0                    0.015)      //09
+	(0.00025           0.00025            0.015)      //10
+	(0                   0.00025            0.015)      //11
+);
+
+blocks          
+(
+	hex ( 0  1  2  3  6  7  8  9) (15  15  150) simpleGrading (0.2 5 1)  //00
+	hex ( 3  2  4  5  9  8 10 11) (15  15  150) simpleGrading (0.2 0.2 1)  //01
+);
+
+edges           
+(
+);
+
+boundary         
+(
+	BotWall
+	{
+		type     wall;
+		faces
+		(
+			( 0  1  7  6)
+		);
+	}
+
+	OtherWalls
+	{
+		type     wall;
+		faces
+		(
+			( 1  2  8  7)
+			( 2  4 10  8)
+			( 4  5 11 10)
+		);
+	}
+
+	Inlet
+	{
+		type             patch;
+		faces
+		(
+			( 0  3  2  1)
+			( 2  3  5  4)
+		);
+	}
+
+	Outlet
+	{
+		type             patch;
+		faces
+		(
+			( 6  7  8  9)
+			( 8 10 11  9)
+		);
+	}
+
+
+	CenterPlane
+	{
+		type             symmetryPlane;
+		faces
+		(
+			( 0  6  9  3)
+			( 3  9 11  5)
+		);
+	}
+);
+
+mergePatchPairs 
+();
+
+// ************************************************************************* //

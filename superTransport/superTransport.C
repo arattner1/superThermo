@@ -94,10 +94,10 @@ Foam::superTransport<Thermo>::superTransport(const dictionary& dict)
     PrVcoeff3_(readScalar(dict.subDict("transport").lookup("PrVcoeff3"))),
     PrVcoeff4_(readScalar(dict.subDict("transport").lookup("PrVcoeff4"))),
     PrVcoeff5_(readScalar(dict.subDict("transport").lookup("PrVcoeff5"))),
-	Trcoeff0_(readScalar(dict.subDict("equationOfState").lookup("Trcoeff0"))),
-	Trcoeff1_(readScalar(dict.subDict("equationOfState").lookup("Trcoeff1"))),
-	Trcoeff2_(readScalar(dict.subDict("equationOfState").lookup("Trcoeff2"))),
-    Pcr_(readScalar(dict.subDict("equationOfState").lookup("Pcr")))
+	Trcoeff0_(readScalar(dict.subDict("transport").lookup("Trcoeff0"))),
+	Trcoeff1_(readScalar(dict.subDict("transport").lookup("Trcoeff1"))),
+	Trcoeff2_(readScalar(dict.subDict("transport").lookup("Trcoeff2"))),
+    Pcr_(readScalar(dict.subDict("transport").lookup("Pcr")))
 {}
 
 
@@ -112,7 +112,6 @@ void Foam::superTransport<Thermo>::superTransport::write(Ostream& os) const
     Thermo::write(os);
 
     dictionary dict("transport");
-	dictionary dict2("equationOfState");
     dict.add("muLcoeff0", muLcoeff0_);
     dict.add("muLcoeff1", muLcoeff1_);
     dict.add("muLcoeff2", muLcoeff2_);
@@ -137,10 +136,10 @@ void Foam::superTransport<Thermo>::superTransport::write(Ostream& os) const
     dict.add("PrVcoeff3", PrVcoeff3_);
     dict.add("PrVcoeff4", PrVcoeff4_);
     dict.add("PrVcoeff5", PrVcoeff5_);
-	dict2.add("Trcoeff0", Trcoeff0_);
-	dict2.add("Trcoeff1", Trcoeff1_);
-	dict2.add("Trcoeff2", Trcoeff2_);
-    dict2.add("Pcr", Pcr_);
+	dict.add("Trcoeff0", Trcoeff0_);
+	dict.add("Trcoeff1", Trcoeff1_);
+	dict.add("Trcoeff2", Trcoeff2_);
+    dict.add("Pcr", Pcr_);
 
     os  << indent << dict.dictName() << dict;
 

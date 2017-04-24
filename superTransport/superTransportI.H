@@ -187,8 +187,8 @@ inline Foam::scalar Foam::superTransport<Thermo>::mu
 			const scalar muL = muLcoeff0_ + muLcoeff1_*Tr + muLcoeff2_*pow(Tr,2) + muLcoeff3_*pow(Tr,3) + muLcoeff4_/(pr+muLcoeff5_);
 			const scalar muV = muVcoeff0_ + muVcoeff1_*Tr + muVcoeff2_*pow(Tr,2) + muVcoeff3_*pow(Tr,3) + muVcoeff4_/(pr+muVcoeff5_);
 		    const scalar mu = f*muV + (1.0-f)*muL;
-			Info<< " first condition for mu" << endl;
-			Info<< "mu = " << mu << endl;
+		//	Info<< " first condition for mu" << endl;
+		//	Info<< "mu = " << mu << endl;
     		return mu; 
 		}
 
@@ -225,8 +225,8 @@ inline Foam::scalar Foam::superTransport<Thermo>::Pr
 			const scalar PrL = PrLcoeff0_*Foam::exp(PrLcoeff1_*Tr) + PrLcoeff2_*Foam::exp(PrLcoeff3_*Tr) + PrLcoeff4_/(pr+PrLcoeff5_);
 			const scalar PrV = PrVcoeff0_*Foam::exp(PrVcoeff1_*Tr) + PrVcoeff2_*Foam::exp(PrVcoeff3_*Tr) + PrVcoeff4_/(pr+PrVcoeff5_);
 		    const scalar Pr = f*PrV + (1.0-f)*PrL;
-			Info<< " first condition for Pr" << endl;
-			Info<< "Pr = " << Pr << endl;
+		//	Info<< " first condition for Pr" << endl;
+		//	Info<< "Pr = " << Pr << endl;
     		return Pr; 
 		}
 
@@ -255,7 +255,7 @@ inline Foam::scalar Foam::superTransport<Thermo>::kappa
 ) const
 {
 	//Printing Cp values for checking
-    Info<< "from superTransport library Cp =  " << (this->Cp)(p, T) << endl;
+   // Info<< "from superTransport library Cp =  " << (this->Cp)(p, T) << endl;
     return this->Cp(p, T)*mu(p, T)*(1.0/Pr(p, T));
 }
 
