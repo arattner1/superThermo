@@ -157,7 +157,7 @@ void Foam::pressureInletTurbulentUniformVelocityFvPatchVectorField::updateCoeffs
 
     pressureInletVelocityFvPatchVectorField::updateCoeffs();
 
-    operator==(patch().nf()*gSum(patch().Sf() & *this)/gSum(patch().magSf()));
+ //   operator==(patch().nf()*gSum(patch().Sf() & *this)/gSum(patch().magSf()));
 }
 
 
