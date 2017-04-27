@@ -97,6 +97,7 @@ functions
 libs ( "libspecie.so"
        "libfluidThermophysicalModels.so"
        "libsuperThermo.so"
+       "libTurbulentInletU.so"
        "libutilityFunctionObjects.so"
        "libOpenFOAM.so"
        "libgroovyBC.so"

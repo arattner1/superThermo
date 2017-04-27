@@ -39,9 +39,15 @@ boundaryField
 		alpha				0.1;
 */  
 
-        value           uniform (0 0 7);
-        type            pressureInletUniformVelocity;
+   /*    value           uniform (0 0 7);
+        type            pressureInletUniformVelocity; */
+        type           		 pressureInletTurbulentUniformVelocity;
+        U              		 U;
+        fluctuationScale  	 (0.01 0.01 0.04);
+        alpha          		 0.1;
+        value           	 uniform (0 0 7);
 	}
+
     Outlet
     {
 	// 	type			zeroGradient;

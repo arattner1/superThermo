@@ -24,7 +24,8 @@ thermoType
     transport       superTransport;
 //    thermo          hConst;
     thermo          superH;
-    equationOfState PengRobinsonGas;
+//    equationOfState PengRobinsonGas;
+    equationOfState redlichKwong;
     specie          specie;
     energy          sensibleEnthalpy;
 }
@@ -47,14 +48,17 @@ mixture
     }
     thermodynamics 
     {
-//        cpL          2327;
-//        cpG          1755;
           cpL          2327;
           cpG          1755;
-        TSpike       306.49;
-        SpikeWidth   2.0;
-//        cpSpike      5614;
-        cpSpike      55000;
+       	  TSpike       306.49;
+          SpikeWidth1   0.5;
+          cpSpike1      40000;
+          SpikeWidth2   1.8;
+          cpSpike2      10000;
+          SpikeWidth3   4.5;
+          cpSpike3      3000;
+          SpikeWidth4   14.5;
+          cpSpike4      2000;
     }
 
 /*

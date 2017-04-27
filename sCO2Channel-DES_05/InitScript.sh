@@ -5,3 +5,4 @@ mirrorMesh -noFunctionObjects -overwrite
 checkMesh
 decomposePar -force
 mpirun -np 4 buoyantPimpleFoam -parallel
+#buoyantPimpleFoam

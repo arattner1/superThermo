@@ -95,8 +95,14 @@ class superH
     scalar cpL;
     scalar cpG;
     scalar TSpike;
-    scalar SpikeWidth;
-    scalar cpSpike;
+    scalar SpikeWidth1;
+    scalar cpSpike1;
+    scalar SpikeWidth2;
+    scalar cpSpike2;
+    scalar SpikeWidth3;
+    scalar cpSpike3;
+    scalar SpikeWidth4;
+    scalar cpSpike4;
 
 
     // Private Member Functions
@@ -108,8 +114,14 @@ class superH
         const scalar cpL,
         const scalar cpG,
         const scalar TSpike,
-        const scalar SpikeWidth,
-        const scalar cpSpike
+        const scalar SpikeWidth1,
+        const scalar cpSpike1,
+        const scalar SpikeWidth2,
+        const scalar cpSpike2,
+        const scalar SpikeWidth3,
+        const scalar cpSpike3,
+        const scalar SpikeWidth4,
+        const scalar cpSpike4
     );
 
 

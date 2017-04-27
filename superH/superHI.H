@@ -32,16 +32,28 @@ inline Foam::superH<equationOfState>::superH
     const scalar cpL_in,
     const scalar cpG_in,
     const scalar TSpike_in,
-    const scalar SpikeWidth_in,
-    const scalar cpSpike_in
+    const scalar SpikeWidth1_in,
+    const scalar cpSpike1_in,
+    const scalar SpikeWidth2_in,
+    const scalar cpSpike2_in,
+    const scalar SpikeWidth3_in,
+    const scalar cpSpike3_in,
+    const scalar SpikeWidth4_in,
+    const scalar cpSpike4_in
 )
 :
     equationOfState(st),
     cpL(cpL_in),
     cpG(cpG_in),    
     TSpike(TSpike_in),    
-    SpikeWidth(SpikeWidth_in),
-    cpSpike(cpSpike_in)
+    SpikeWidth1(SpikeWidth1_in),
+    cpSpike1(cpSpike1_in),
+    SpikeWidth2(SpikeWidth2_in),
+    cpSpike2(cpSpike2_in),
+    SpikeWidth3(SpikeWidth3_in),
+    cpSpike3(cpSpike3_in),
+    SpikeWidth4(SpikeWidth4_in),
+    cpSpike4(cpSpike4_in)
 {}
 
 
@@ -58,8 +70,14 @@ inline Foam::superH<equationOfState>::superH
     cpL(ct.cpL),
     cpG(ct.cpG),
     TSpike(ct.TSpike),
-    SpikeWidth(ct.SpikeWidth),
-    cpSpike(ct.cpSpike)
+    SpikeWidth1(ct.SpikeWidth1),
+    cpSpike1(ct.cpSpike1),
+    SpikeWidth2(ct.SpikeWidth2),
+    cpSpike2(ct.cpSpike2),
+    SpikeWidth3(ct.SpikeWidth3),
+    cpSpike3(ct.cpSpike3),
+    SpikeWidth4(ct.SpikeWidth4),
+    cpSpike4(ct.cpSpike4)
 {}
 
 
@@ -117,7 +135,10 @@ inline Foam::scalar Foam::superH<equationOfState>::cp
 ) const
 {
 	const scalar cp = pos(T-TSpike)*cpG + neg(T-TSpike)*cpL
-	                  + cpSpike*exp(-1.0 * pow( (T-TSpike)/SpikeWidth, 2) );
+	                  + cpSpike1*exp(-1.0 * pow( (T-TSpike)/SpikeWidth1, 2) )
+	                  + cpSpike2*exp(-1.0 * pow( (T-TSpike)/SpikeWidth2, 2) )
+	                  + cpSpike3*exp(-1.0 * pow( (T-TSpike)/SpikeWidth3, 2) )
+	                  + cpSpike4*exp(-1.0 * pow( (T-TSpike)/SpikeWidth4, 2) );
     return cp;
     
     
@@ -135,8 +156,10 @@ inline Foam::scalar Foam::superH<equationOfState>::ha
     (
           pos(T - TSpike)*cpG*(T - TSpike)
         + neg(T - TSpike)*cpL*(T - TSpike)
-        - (sqrt(3.141592)*cpSpike*SpikeWidth/2.0)*erf((TSpike-T)/SpikeWidth)
-    
+        - (sqrt(3.141592)*cpSpike1*SpikeWidth1/2.0)*erf((TSpike-T)/SpikeWidth1)
+        - (sqrt(3.141592)*cpSpike2*SpikeWidth2/2.0)*erf((TSpike-T)/SpikeWidth2)
+        - (sqrt(3.141592)*cpSpike3*SpikeWidth3/2.0)*erf((TSpike-T)/SpikeWidth3)
+        - (sqrt(3.141592)*cpSpike4*SpikeWidth4/2.0)*erf((TSpike-T)/SpikeWidth4)
     );
 }
 
@@ -243,8 +266,14 @@ inline Foam::superH<equationOfState> Foam::operator+
         ct1.nMoles()/eofs.nMoles()*ct1.CpL,
         ct1.nMoles()/eofs.nMoles()*ct1.CpG,
         ct1.TSpike,
-        ct1.SpikeWidth,
-        ct1.nMoles()/eofs.nMoles()*ct1.cpSpike
+        ct1.SpikeWidth1,
+        ct1.nMoles()/eofs.nMoles()*ct1.cpSpike1,
+        ct1.SpikeWidth2,
+        ct1.nMoles()/eofs.nMoles()*ct1.cpSpike2,
+        ct1.SpikeWidth3,
+        ct1.nMoles()/eofs.nMoles()*ct1.cpSpike3,
+        ct1.SpikeWidth4,
+        ct1.nMoles()/eofs.nMoles()*ct1.cpSpike4
         
 //        ct1.nMoles()/eofs.nMoles()*ct1.CpL_
 //      + ct2.nMoles()/eofs.nMoles()*ct2.CpL_,
@@ -283,8 +312,14 @@ inline Foam::superH<equationOfState> Foam::operator-
         ct1.nMoles()/eofs.nMoles()*ct1.CpL,
         ct1.nMoles()/eofs.nMoles()*ct1.CpG,
         ct1.TSpike,
-        ct1.SpikeWidth,
-        ct1.nMoles()/eofs.nMoles()*ct1.cpSpike
+        ct1.SpikeWidth1,
+        ct1.nMoles()/eofs.nMoles()*ct1.cpSpike1,
+        ct1.SpikeWidth2,
+        ct1.nMoles()/eofs.nMoles()*ct1.cpSpike2,
+        ct1.SpikeWidth3,
+        ct1.nMoles()/eofs.nMoles()*ct1.cpSpike3,
+        ct1.SpikeWidth4,
+        ct1.nMoles()/eofs.nMoles()*ct1.cpSpike4
 //        ct1.nMoles()/eofs.nMoles()*ct1.CpL_
 //      - ct2.nMoles()/eofs.nMoles()*ct2.CpL_,
 //        ct1.nMoles()/eofs.nMoles()*ct1.CpG_
@@ -314,8 +349,14 @@ inline Foam::superH<equationOfState> Foam::operator*
         ct.cpL,
         ct.cpG,
         ct.TSpike,
-        ct.SpikeWidth,
-        ct.cpSpike
+        ct.SpikeWidth1,
+        ct.cpSpike1,
+        ct.SpikeWidth2,
+        ct.cpSpike2,
+        ct.SpikeWidth3,
+        ct.cpSpike3,
+        ct.SpikeWidth4,
+        ct.cpSpike4
 //        ct.cpG_,
 //        ct.cpVF_,
 //        ct.TSpike_,
