@@ -1,0 +1,107 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     buoyantPimpleFoam;
+
+startFrom       latestTime;
+
+//startTime       0;
+
+stopAt          endTime;
+
+endTime         0.6;
+
+deltaT          1E-6;
+maxDeltaT       1E-4;
+
+//writeControl    timeStep;
+writeControl    adjustableRunTime; 
+writeInterval   5E-3;
+
+purgeWrite      0;
+
+writeFormat     binary;//ascii;
+writeCompression on;//on;
+
+
+writePrecision  6;
+
+
+
+timeFormat      general;
+
+timePrecision   10;
+
+adjustTimeStep  yes;
+
+maxCo          0.25;
+
+runTimeModifiable yes;
+
+functions
+(
+	LiveInfo
+	{
+		functionObjectLibs ("libutilityFunctionObjects.so");
+		type coded;
+		redirectType SummaryData;
+		outputControl timeStep;
+		outputInterval 1;
+		code		
+		#{
+			const volScalarField& rho = mesh().lookupObject<volScalarField>("rho");
+			const scalar rhoAvg = gSum( mesh().V() * rho.internalField() ) / gSum( mesh().V() );
+			Info<< "Average density: " << rhoAvg << endl;
+		#}; 
+
+		codeInclude
+		#{
+			#include <fstream>
+		#};
+	}
+	
+	WriteRho
+	{
+		functionObjectLibs   ("libIOFunctionObjects.so");
+        type                 writeRegisteredObject;
+        objectNames           ( rho );
+        outputControl        outputTime; //timeStep
+        //outputInterval       1;
+	}
+
+	Writeh
+	{
+		functionObjectLibs   ("libIOFunctionObjects.so");
+        type                 writeRegisteredObject;
+        objectNames           ( h );
+        outputControl        outputTime; //timeStep
+        //outputInterval       1;
+	}
+	
+);
+
+libs ( "libspecie.so"
+       "libfluidThermophysicalModels.so"
+       "libsuperThermo.so"
+       "libTurbulentInletU.so"
+       "libutilityFunctionObjects.so"
+       "libOpenFOAM.so"
+       "libgroovyBC.so"
+       "libsimpleSwakFunctionObjects.so"
+       "libswakFunctionObjects.so"   );
+
+// ************************************************************************* //
