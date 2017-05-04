@@ -23,7 +23,7 @@ startFrom       latestTime;
 
 stopAt          endTime;
 
-endTime         0.6;
+endTime         0.4;
 
 deltaT          1E-6;
 maxDeltaT       1E-4;

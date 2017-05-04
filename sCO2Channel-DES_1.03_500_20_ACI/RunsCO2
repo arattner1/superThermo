@@ -9,7 +9,7 @@ source /storage/work/asr20/OpenFOAM/SetupOpenFOAM.sh
 
 #Set some consts
 N_PROCS=40
-PROB_DIR=sCO2Channel-DES_1.03_500_20
+PROB_DIR=sCO2Channel-DES_1.03_500_20_ACI
 SOLVER=buoyantPimpleFoam
 
 #Set up the job
