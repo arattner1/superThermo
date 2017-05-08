@@ -63,7 +63,11 @@ inline Foam::scalar Foam::species::thermo<Thermo, Type>::T
 
     scalar s, c, f_s, f_c;
 
+    //Counter added by MN
+	int	count = 0;
+
 	do{
+
 		c = (a+b)/2.0;
 		f_c = (this->*F)(p, c) - f;
 //Info<< "c: " << c << endl;
@@ -100,6 +104,15 @@ inline Foam::scalar Foam::species::thermo<Thermo, Type>::T
 		}else{
 			b = c;
 		}
+
+
+		count = count + 1;
+		if(count > 500)
+		{ 
+			Info<< "count: " << count << endl;
+			Info<< "Iterations on temperature not successful" << endl;
+		}
+
 //Info<< "a, b: " << a << ", " << b << endl;
 	}while(mag(f_s) > tol && mag(b-a)>tol);	// Convergence conditions
 //Info<< "T: " << s << endl;
