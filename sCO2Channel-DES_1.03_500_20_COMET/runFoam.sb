@@ -5,7 +5,7 @@
 #SBATCH --nodes=1                 # Number of nodes  
 #SBATCH --ntasks-per-node=20      # Number of tasks per node 
 #SBATCH --export=ALL         
-#SBATCH -t 01:00:00               # Run time (hh:mm:ss) 
+#SBATCH -t 24:00:00               # Run time (hh:mm:ss) 
 
 ## Nodefiles
 export SLURM_NODEFILE=`generate_pbs_nodefile`
@@ -13,7 +13,7 @@ cat $SLURM_NODEFILE > nodes.list.$SLURM_JOBID
 uniq nodes.list.$SLURM_JOBID > nodes.unq.list
 
 ## Timeout value after which run is stopped and files copied back
-export WAITVAL=45m
+export WAITVAL=1410m
 
 #Copy needed files to scratch and launch the copyback scripts
 for (( nn=1; nn<=$SLURM_NNODES; nn++ ))
