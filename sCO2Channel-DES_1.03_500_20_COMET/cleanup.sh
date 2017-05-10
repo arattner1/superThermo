@@ -9,3 +9,4 @@ rm -r BACK*
 rm -r Foam.*
 rm -r nodes.*
 rm -r node* 
+rm -r pro*
