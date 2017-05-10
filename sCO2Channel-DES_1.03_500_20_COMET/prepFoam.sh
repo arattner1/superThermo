@@ -11,7 +11,7 @@ if [ -f $FILEN ]
 then
  echo "$FILEN already exists"
 else
- tar -cvf $FILEN 0 system constant
+ tar -cvf $FILEN 0 system constant dynamicCode
 fi
 
 pnumber=0
