@@ -56,10 +56,10 @@ vertices
 
 blocks          
 (
-	hex ( 0  1  2  3  6  7  8  9) (15  15  500) simpleGrading (0.2 5 1)  //00
-	hex ( 3  2  4  5  9  8 10 11) (15  15  500) simpleGrading (0.2 0.2 1)  //01
-	hex ( 6  7  8  9 12 13 14 15) (15  15  500) simpleGrading (0.2 5 1)  //02
-	hex ( 9  8 10 11 15 14 16 17) (15  15  500) simpleGrading (0.2 0.2 1)  //03
+	hex ( 0  1  2  3  6  7  8  9) (30  30  1000) simpleGrading (0.2 5 1)  //00
+	hex ( 3  2  4  5  9  8 10 11) (30  30  1000) simpleGrading (0.2 0.2 1)  //01
+	hex ( 6  7  8  9 12 13 14 15) (30  30  1000) simpleGrading (0.2 5 1)  //02
+	hex ( 9  8 10 11 15 14 16 17) (30  30  1000) simpleGrading (0.2 0.2 1)  //03
 );
 
 edges           
