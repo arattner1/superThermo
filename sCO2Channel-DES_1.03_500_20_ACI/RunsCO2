@@ -1,8 +1,8 @@
 #!/bin/bash -l
 #PBS -N sCO2_Val2_DES
-#PBS -l nodes=2:ppn=20
+#PBS -l nodes=4:ppn=10
 #PBS -l walltime=240:00:00
-#PBS -A asr20_collab
+#PBS -A asr20_a_g_sc_default
 
 #Setup openfoam
 source /storage/home/mmn5264/OpenFOAM/SetupOpenFOAM-Personal.sh
