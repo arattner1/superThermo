@@ -16,7 +16,7 @@ FoamFile
 
 dimensions      [1 -1 -2 0 0 0 0];
 
-internalField   uniform  7.6383804E6; 
+internalField   uniform  7.638344E6; 
 
 boundaryField
 {
@@ -41,7 +41,7 @@ boundaryField
     Outlet
     {
         type               fixedValue;
-        value              uniform 7.6383804E6;
+        value              uniform 7.638344E6;
     }
 }
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-source /storage/work/asr20/OpenFOAM/SetupOpenFOAM.sh
+source /storage/home/mmn5264/OpenFOAM/SetupOpenFOAM-Personal.sh
 cd ${0%/*} || exit 1    # run from this directory
 
 # Source tutorial clean functions

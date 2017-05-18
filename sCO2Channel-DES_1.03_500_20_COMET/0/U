@@ -16,7 +16,7 @@ FoamFile
 
 dimensions      [0 1 -1 0 0 0 0];
 
-internalField   uniform (0 0 0.8456); //(0 0 0);
+internalField   uniform (0 0 0.8326); //(0 0 0);
 
 boundaryField
 {
@@ -50,14 +50,14 @@ boundaryField
         U              		 U;
         fluctuationScale  	 uniform (0.01 0.01 0.04);  //Calculated
         alpha          		 0.1;
-        value           	 uniform (0 0 0.8456);
+        value           	 uniform (0 0 0.8326);    //Re and U from EES: Re=rho*U*Dh/mu
 	}
 
     Outlet
     {
 	// 	type			zeroGradient;
     //    type            pressureInletOutletVelocity;
-        value           uniform (0 0 0.8456);
+        value           uniform (0 0 0.8326);
         type            fluxCorrectedVelocity;
     }
 }

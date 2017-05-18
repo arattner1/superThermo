@@ -1,15 +1,15 @@
 #!/bin/bash -l
-#PBS -N sCO2_Val1_DES
+#PBS -N sCO2_Val2_DES
 #PBS -l nodes=2:ppn=20
-#PBS -l walltime=72:00:00
+#PBS -l walltime=240:00:00
 #PBS -A asr20_collab
 
 #Setup openfoam
-source /storage/work/asr20/OpenFOAM/SetupOpenFOAM.sh
+source /storage/home/mmn5264/OpenFOAM/SetupOpenFOAM-Personal.sh
 
 #Set some consts
 N_PROCS=40
-PROB_DIR=sCO2Channel-DES_1.03_500_20_ACI
+PROB_DIR=sCO2Channel-DES_1.03_500_20
 SOLVER=buoyantPimpleFoam
 
 #Set up the job

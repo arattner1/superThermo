@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name="FoamTest_2nodes"     # Job Name
-#SBATCH --output="Foam.%j.%N.out" # Output filename
+#SBATCH --output="Foam.%j.%N.txt" # Output filename
 #SBATCH --partition=compute        # Queue (partition) name
 #SBATCH --nodes=2                 # Number of nodes  
 #SBATCH --ntasks-per-node=24      # Number of tasks per node 
