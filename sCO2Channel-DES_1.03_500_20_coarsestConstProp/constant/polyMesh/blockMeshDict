@@ -1,0 +1,146 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.7.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+//For m4 preprocessing
+
+
+
+
+//Some dimensions here
+             //Square channel width
+             //Square channel height
+	      //Development length
+	      //Total Domain length
+               //Number of cells across (radial direction)
+               //Number of cells across unheated section (radial direction)
+               //Number of cells across heated section (radial direction)
+           //Expansion ratio in x-direction
+
+convertToMeters 1;
+
+vertices        
+(
+	//Back face
+	(0                   -0.00036866           0)      //00
+	(0.00037501           -0.00036866           0)      //01
+	(0.00037501           0                    0)      //02
+	(0                   0                    0)      //03
+	(0.00037501           0.00036866            0)      //04
+	(0                   0.00036866            0)      //05
+	//Middle face
+	(0                   -0.00036866          30E-3)      //06
+	(0.00037501           -0.00036866          30E-3)      //07
+	(0.00037501           0                   30E-3)      //08
+	(0                   0                   30E-3)      //09
+	(0.00037501           0.00036866           30E-3)      //10
+	(0                   0.00036866           30E-3)      //11
+	//Front face
+	(0                   -0.00036866           50E-3)      //12
+	(0.00037501           -0.00036866           50E-3)      //13
+	(0.00037501           0                    50E-3)      //14
+	(0                   0                    50E-3)      //15
+	(0.00037501           0.00036866            50E-3)      //16
+	(0                   0.00036866            50E-3)      //17
+);
+
+blocks          
+(
+	hex ( 0  1  2  3  6  7  8  9) (15  15  250) simpleGrading (( (0.7 0.6 1) (0.3 0.4 0.5) ) ( (0.3 0.4 2) (0.7 0.6 1) ) 1)   //00
+
+	hex ( 3  2  4  5  9  8 10 11) (15  15  250) simpleGrading (((0.7 0.6 1) (0.3 0.4 0.5) ) ((0.7 0.6 1) (0.3 0.4 0.5) )  1)  //01
+
+	hex ( 6  7  8  9 12 13 14 15) (15  15  150) simpleGrading (( (0.7 0.6 1) (0.3 0.4 0.5) ) ( (0.3 0.4 2) (0.7 0.6 1) ) 1)  //02
+
+	hex ( 9  8 10 11 15 14 16 17) (15  15  150) simpleGrading (((0.7 0.6 1) (0.3 0.4 0.5) ) ((0.7 0.6 1) (0.3 0.4 0.5) )  1)  //03
+
+);
+
+edges           
+(
+);
+
+boundary         
+(
+	BotWall1
+	{
+		type     wall;
+		faces
+		(
+			( 0  1  7 6)
+		);
+	}
+
+	BotWall2
+	{
+		type     wall;
+		faces
+		(
+			( 6 7 13 12)
+		);
+	}
+
+	OtherWalls
+	{
+		type     wall;
+		faces
+		(
+			( 1  2  8  7)
+			( 2  4 10  8)
+			( 4  5 11 10)
+			( 7  8 14 13)
+			( 8  10 16 14)
+			( 10 11 17 16)
+		);
+	}
+
+	Inlet
+	{
+		type             patch;
+		faces
+		(
+			( 0  3  2  1)
+			( 2  3  5  4)
+		);
+	}
+
+	Outlet
+	{
+		type             patch;
+		faces
+		(
+			( 12 13 14 15)
+			( 14 16 17 15)
+		);
+	}
+
+
+	CenterPlane
+	{
+		type             symmetryPlane;
+		faces
+		(
+			( 0  6  9  3)
+			( 3  9 11  5)
+			( 6 12 15 9)
+			(9 15 17 11)
+		);
+	}
+);
+
+mergePatchPairs 
+();
+
+// ************************************************************************* //
