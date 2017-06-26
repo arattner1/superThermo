@@ -22,9 +22,10 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 \*---------------------------------------------------------------------------*/
-
+#include "compressibleTransportModel.H"
 #include "rhoThermo.H"
 #include "makeThermo.H"
+
 
 #include "specie.H"
 #include "hConstThermo.H"
@@ -35,7 +36,6 @@ License
 #include "superTransport/superTransport.H"
 #include "sutherlandTransport.H"
 #include "PengRobinsonGas.H"
-#include "redlichKwongEOS/redlichKwong.H"
 #include "superEOS/superEOS.H"
 #include "superH/superH.H"
 
@@ -70,18 +70,6 @@ makeThermo
     sensibleEnthalpy,
     superH,
     PengRobinsonGas,
-    specie
-);
-
-makeThermo
-(
-    rhoThermo,
-    heRhoThermo,
-    pureMixture,
-    superTransport,
-    sensibleEnthalpy,
-    superH,
-    redlichKwong,
     specie
 );
 
