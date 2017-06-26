@@ -1,0 +1,20 @@
+#!/bin/bash -l
+#PBS -N sCO2_SpAll_Var
+#PBS -l nodes=1:ppn=20
+#PBS -l walltime=240:00:00
+#PBS -A asr20_a_g_sc_default
+
+#Setup openfoam
+source /storage/home/mmn5264/OpenFOAM/SetupOpenFOAM4-Personal.sh
+
+#Set some consts
+N_PROCS=20
+PROB_DIR=sCO2Channel-DES_SpAll
+SOLVER=buoyantPimpleFoam
+
+#Set up the job
+cd $HOME/scratch/$PROB_DIR
+
+#Initial run
+mpirun -np $N_PROCS $SOLVER -parallel > $PROB_DIR.txt
+
