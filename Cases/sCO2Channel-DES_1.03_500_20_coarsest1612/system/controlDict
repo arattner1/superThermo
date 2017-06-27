@@ -1,0 +1,201 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     buoyantPimpleFoam;
+
+startFrom       latestTime;
+
+//startTime       0;
+
+stopAt          endTime;
+
+endTime         0.25;
+
+deltaT          1E-6;
+maxDeltaT       1E-4;
+
+//writeControl    timeStep;
+writeControl    adjustableRunTime; 
+writeInterval   5E-3;
+
+purgeWrite      0;
+
+writeFormat     binary;//ascii;
+writeCompression on;//on;
+
+
+writePrecision  6;
+
+
+
+timeFormat      general;
+
+timePrecision   10;
+
+adjustTimeStep  yes;
+
+maxCo          0.4;
+
+runTimeModifiable yes;
+
+functions
+{
+	timeStep
+	{
+        type            coded;
+        libs            ("libutilityFunctionObjects.so");
+        name            OutputInfo;
+
+        code
+        #{
+        #};
+
+        codeExecute
+        #{
+
+			//***********************************************************************
+			//First get t and dt
+			scalar t = mesh().time().value();
+			scalar dt = mesh().time().deltaTValue();
+			//***********************************************************************
+
+			//***********************************************************************
+            //Get mass flux G
+			const volScalarField& rho = mesh().lookupObject<volScalarField>("rho");
+			const volVectorField& U = mesh().lookupObject<volVectorField>("U");
+			const scalarField& V = mesh().V();
+			const scalarField rhoV = rho*V;
+
+   			//const vector Gvec = gSum( rho.internalField()*U.internalField()*mesh().V() ) / gSum( mesh().V() );
+   			const vector Gvec = gSum( U.internalField()*rhoV ) / gSum( V );
+   			const scalar G = Gvec[2];
+    		//***********************************************************************
+
+			//***********************************************************************
+            //Get average heat flux on walls
+			const fvBoundaryMesh& bMesh = mesh().boundary();
+			//Next get wall patches:
+			const label WallPatchID1  = bMesh.findPatchID("BotWall1");
+			const label WallPatchID2  = bMesh.findPatchID("BotWall2");
+			const label WallPatchID3  = bMesh.findPatchID("OtherWalls");
+			const fvPatch& WallPatch1 = bMesh[WallPatchID1];
+			const fvPatch& WallPatch2 = bMesh[WallPatchID2];
+			const fvPatch& WallPatch3 = bMesh[WallPatchID3];
+			//Get temp gradient on the wall
+
+			const volScalarField& h = mesh().lookupObject<volScalarField>("h");
+			const volScalarField& alphaSgs = mesh().lookupObject<volScalarField>("alphat");
+			const volScalarField& alpha = mesh().lookupObject<volScalarField>("thermo:alpha");
+			const surfaceScalarField alphaEff= fvc::interpolate( alphaSgs + alpha );
+
+			const surfaceScalarField q = alphaEff * fvc::snGrad(h);
+			const scalarField qWall1 = q.boundaryField()[WallPatchID1];
+    		const scalarField qWall2 = q.boundaryField()[WallPatchID2];
+    		const scalarField qWall3 = q.boundaryField()[WallPatchID3];
+
+			//Cell face areas
+			const scalarField& Af1 = WallPatch1.magSf();
+			const scalarField& Af2 = WallPatch2.magSf();
+			const scalarField& Af3 = WallPatch3.magSf();
+			//Average heat flux
+			const scalar WallFlux = ( gSum( Af1*qWall1)  + gSum(Af2*qWall2) + gSum(Af3*qWall3) )/( gSum(Af1) + gSum(Af2) + gSum(Af3) );
+			//***********************************************************************
+
+
+
+
+			//***********************************************************************
+			//Finally print out results:
+			//Now write out data:
+			if( Pstream::master() == true )
+			{
+				std::ofstream fs;
+				fs.open ("Output_Data.dat", std::fstream::app);
+				fs.precision(8);
+				fs << t << "\t" << dt << "\t" << G << "\t" << WallFlux << "\n" ;
+				fs.close();
+			//***********************************************************************
+			}
+		#}; 
+
+		codeInclude
+		#{
+			#include <fstream>
+		#};
+	}
+
+
+    wallHeatFlux1
+    {
+        type        wallHeatFlux;
+        libs        ("libfieldFunctionObjects.so");
+        patches     ("BotWall2");
+		writeControl writeTime;
+    }
+
+
+    vorticity1
+    {
+        type        vorticity;
+        libs        ("libfieldFunctionObjects.so");
+		writeControl writeTime;
+    }
+
+ 	yPlus1
+    {
+        type        yPlus;
+        libs        ("libfieldFunctionObjects.so");
+	    writeControl    writeTime;
+    }
+
+	WriteRho
+	{
+		functionObjectLibs   ("libutilityFunctionObjects.so");
+        type                 writeObjects;
+        objects           ( rho );
+		writeControl      writeTime;
+	}
+
+	Writeh
+	{
+		functionObjectLibs   ("libutilityFunctionObjects.so");
+        type                 writeObjects;
+        objects           ( h );
+		writeControl       writeTime;
+	}
+
+	Writemu
+	{
+		functionObjectLibs   ("libutilityFunctionObjects.so");
+        type                 writeObjects;
+        objects           ( thermo:mu );
+		writeControl       writeTime;
+	}
+
+}
+
+libs ( "libspecie.so"
+       "libfluidThermophysicalModels.so"
+       "libsuperThermo.so"
+       "libTurbulentInletU.so"
+       "libutilityFunctionObjects.so"
+       "libOpenFOAM.so" );
+     //  "libgroovyBC.so"
+     //  "libsimpleSwakFunctionObjects.so"
+     //  "libswakFunctionObjects.so"   );
+
+// ************************************************************************* //
