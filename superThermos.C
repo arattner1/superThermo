@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 #include "compressibleTransportModel.H"
 #include "rhoThermo.H"
+#include "psiThermo.H"
 #include "makeThermo.H"
 
 
@@ -36,10 +37,14 @@ License
 #include "superTransport/superTransport.H"
 #include "sutherlandTransport.H"
 #include "PengRobinsonGas.H"
+#include "PengRobinsonGasPConst/PengRobinsonGasPConst.H"
+#include "rhoConst.H"
 #include "superEOS/superEOS.H"
 #include "superH/superH.H"
 
+
 #include "heRhoThermo.H"
+#include "hePsiThermo.H"
 #include "pureMixture.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -48,6 +53,7 @@ namespace Foam
 {
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
 
 makeThermo
 (
@@ -69,6 +75,19 @@ makeThermo
     superTransport,
     sensibleEnthalpy,
     superH,
+    rhoConst,
+    specie
+);
+
+
+makeThermo
+(
+    rhoThermo,
+    heRhoThermo,
+    pureMixture,
+    superTransport,
+    sensibleEnthalpy,
+    superH,
     PengRobinsonGas,
     specie
 );
@@ -78,7 +97,33 @@ makeThermo
     rhoThermo,
     heRhoThermo,
     pureMixture,
+    superTransport,
+    sensibleEnthalpy,
+    superH,
+    PengRobinsonGasPConst,
+    specie
+);
+
+makeThermo
+(
+    rhoThermo,
+    heRhoThermo,
+    pureMixture,
     sutherlandTransport,
+    sensibleEnthalpy,
+    superH,
+    PengRobinsonGas,
+    specie
+);
+
+
+
+makeThermo
+(
+    psiThermo,
+    hePsiThermo,
+    pureMixture,
+    superTransport,
     sensibleEnthalpy,
     superH,
     PengRobinsonGas,

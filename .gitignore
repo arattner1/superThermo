@@ -3,4 +3,5 @@ lninclude
 lnInclude
 linux64GccDPOpt
 linux64IccDPOpt
+linux64Gcc*
 *.tmp
