@@ -32,21 +32,26 @@ template<class equationOfState>
 Foam::superH<equationOfState>::superH(Istream& is)
 :
     equationOfState(is),
-    cpL_(readScalar(is)),
-    cpG_(readScalar(is)),
-    cpVF_(readScalar(is)),
-    TSpike_(readScalar(is)),
-    SpikeWidth_(readScalar(is)),
-    Tband_(readScalar(is))
+    cpL(readScalar(is)),
+    cpG(readScalar(is)),
+    TSpike(readScalar(is)),
+    SpikeWidth1(readScalar(is)),
+    cpSpike1(readScalar(is)),
+    SpikeWidth2(readScalar(is)),
+    cpSpike2(readScalar(is)),
+    SpikeWidth3(readScalar(is)),
+    cpSpike3(readScalar(is)),
+    SpikeWidth4(readScalar(is)),
+    cpSpike4(readScalar(is))
 {
     is.check("superH::superH(Istream& is)");
 
-    cpL_ *= this->W();
-    cpG_ *= this->W();
-    cpVF_ *= this->W();
-    TSpike_ *= this->W();
-    SpikeWidth_ *= this->W();
-    Tband_ *= this->W();
+    cpL  *= this->W();
+    cpG  *= this->W();
+    cpSpike1 *= this->W();
+    cpSpike2 *= this->W();
+    cpSpike3 *= this->W();
+    cpSpike4 *= this->W();
 }
 
 
@@ -54,19 +59,24 @@ template<class equationOfState>
 Foam::superH<equationOfState>::superH(const dictionary& dict)
 :
     equationOfState(dict),
-    cpL_(readScalar(dict.subDict("thermodynamics").lookup("cpL"))),
-    cpG_(readScalar(dict.subDict("thermodynamics").lookup("cpG"))),
-    cpVF_(readScalar(dict.subDict("thermodynamics").lookup("cpVariationFactor"))),
-    TSpike_(readScalar(dict.subDict("thermodynamics").lookup("cpSpike"))),
-    SpikeWidth_(readScalar(dict.subDict("thermodynamics").lookup("SpikeWidth"))),
-    Tband_(readScalar(dict.subDict("thermodynamics").lookup("Tband")))
+    cpL(readScalar(dict.subDict("thermodynamics").lookup("cpL"))),
+    cpG(readScalar(dict.subDict("thermodynamics").lookup("cpG"))),
+    TSpike(readScalar(dict.subDict("thermodynamics").lookup("TSpike"))),
+    SpikeWidth1(readScalar(dict.subDict("thermodynamics").lookup("SpikeWidth1"))),
+    cpSpike1(readScalar(dict.subDict("thermodynamics").lookup("cpSpike1"))),
+    SpikeWidth2(readScalar(dict.subDict("thermodynamics").lookup("SpikeWidth2"))),
+    cpSpike2(readScalar(dict.subDict("thermodynamics").lookup("cpSpike2"))),
+    SpikeWidth3(readScalar(dict.subDict("thermodynamics").lookup("SpikeWidth3"))),
+    cpSpike3(readScalar(dict.subDict("thermodynamics").lookup("cpSpike3"))),
+    SpikeWidth4(readScalar(dict.subDict("thermodynamics").lookup("SpikeWidth4"))),
+    cpSpike4(readScalar(dict.subDict("thermodynamics").lookup("cpSpike4")))
 {
-    cpL_ *= this->W();
-    cpG_ *= this->W();
-    cpVF_ *= this->W();
-    TSpike_ *= this->W();
-    SpikeWidth_ *= this->W();
-    Tband_ *= this->W();
+    cpL  *= this->W();
+    cpG  *= this->W();
+    cpSpike1 *= this->W();
+    cpSpike2 *= this->W();
+    cpSpike3 *= this->W();
+    cpSpike4 *= this->W();
 }
 
 
@@ -78,12 +88,17 @@ void Foam::superH<equationOfState>::write(Ostream& os) const
     equationOfState::write(os);
 
     dictionary dict("thermodynamics");
-    dict.add("cpL", cpL_/this->W());
-    dict.add("cpG", cpG_/this->W());
-    dict.add("cpVariationFactor", cpVF_/this->W());
-    dict.add("cpSpike", TSpike_/this->W());
-    dict.add("SpikeWidth", SpikeWidth_/this->W());
-    dict.add("Tband", Tband_/this->W());
+    dict.add("cpL", cpL/this->W());
+    dict.add("cpG", cpG/this->W());
+    dict.add("TSpike", TSpike);
+    dict.add("SpikeWidth1", SpikeWidth1);
+    dict.add("cpSpike1", cpSpike1/this->W());
+    dict.add("SpikeWidth2", SpikeWidth2);
+    dict.add("cpSpike2", cpSpike2/this->W());
+    dict.add("SpikeWidth3", SpikeWidth3);
+    dict.add("cpSpike3", cpSpike3/this->W());
+    dict.add("SpikeWidth4", SpikeWidth4);
+    dict.add("cpSpike4", cpSpike4/this->W());
     os  << indent << dict.dictName() << dict;
 }
 
@@ -98,12 +113,17 @@ Foam::Ostream& Foam::operator<<
 )
 {
     os  << static_cast<const equationOfState&>(ct)
-        << tab << ct.cpL_/ct.W()
-        << tab << ct.cpG_/ct.W()
-        << tab << ct.cpVF_/ct.W()
-        << tab << ct.TSpike_/ct.W()
-        << tab << ct.SpikeWidth_/ct.W()
-        << tab << ct.Tband_/ct.W();
+        << tab << ct.cpL/ct.W()
+        << tab << ct.cpG/ct.W()
+        << tab << ct.TSpike
+        << tab << ct.SpikeWidth1
+        << tab << ct.cpSpike1/ct.W()
+        << tab << ct.SpikeWidth2
+        << tab << ct.cpSpike2/ct.W()
+        << tab << ct.SpikeWidth3
+        << tab << ct.cpSpike3/ct.W()
+        << tab << ct.SpikeWidth4
+        << tab << ct.cpSpike4/ct.W();
 
     os.check("Ostream& operator<<(Ostream& os, const superH& ct)");
     return os;

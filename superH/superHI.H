@@ -29,21 +29,31 @@ template<class equationOfState>
 inline Foam::superH<equationOfState>::superH
 (
     const equationOfState& st,
-    const scalar cpL,
-    const scalar cpG,
-    const scalar cpVF,
-    const scalar TSpike,
-    const scalar SpikeWidth,
-    const scalar Tband
+    const scalar cpL_in,
+    const scalar cpG_in,
+    const scalar TSpike_in,
+    const scalar SpikeWidth1_in,
+    const scalar cpSpike1_in,
+    const scalar SpikeWidth2_in,
+    const scalar cpSpike2_in,
+    const scalar SpikeWidth3_in,
+    const scalar cpSpike3_in,
+    const scalar SpikeWidth4_in,
+    const scalar cpSpike4_in
 )
 :
     equationOfState(st),
-    cpL_(cpL),
-    cpG_(cpG),
-    cpVF_(cpVF),
-    TSpike_(TSpike),
-    SpikeWidth_(SpikeWidth),
-    Tband_(Tband)
+    cpL(cpL_in),
+    cpG(cpG_in),    
+    TSpike(TSpike_in),    
+    SpikeWidth1(SpikeWidth1_in),
+    cpSpike1(cpSpike1_in),
+    SpikeWidth2(SpikeWidth2_in),
+    cpSpike2(cpSpike2_in),
+    SpikeWidth3(SpikeWidth3_in),
+    cpSpike3(cpSpike3_in),
+    SpikeWidth4(SpikeWidth4_in),
+    cpSpike4(cpSpike4_in)
 {}
 
 
@@ -57,12 +67,17 @@ inline Foam::superH<equationOfState>::superH
 )
 :
     equationOfState(name, ct),
-    cpL_(ct.cpL),
-    cpG_(ct.cpG),
-    cpVF_(ct.cpVF),
-    TSpike_(ct.TSpike),
-    SpikeWidth_(ct.SpikeWidth),
-    Tband_(ct.Tband)
+    cpL(ct.cpL),
+    cpG(ct.cpG),
+    TSpike(ct.TSpike),
+    SpikeWidth1(ct.SpikeWidth1),
+    cpSpike1(ct.cpSpike1),
+    SpikeWidth2(ct.SpikeWidth2),
+    cpSpike2(ct.cpSpike2),
+    SpikeWidth3(ct.SpikeWidth3),
+    cpSpike3(ct.cpSpike3),
+    SpikeWidth4(ct.SpikeWidth4),
+    cpSpike4(ct.cpSpike4)
 {}
 
 
@@ -119,10 +134,15 @@ inline Foam::scalar Foam::superH<equationOfState>::cp
     const scalar T
 ) const
 {
-	const scalar cp = ( cpL_*Foam::exp(-cpVF_*T/Tband_) + cpG_*Foam::exp(cpVF_*T/Tband_) )
-	                  / ( Foam::exp(-cpVF_*T/Tband_) + Foam::exp(cpVF_*T/Tband_) ) + TSpike_/(1 + pow((SpikeWidth_*T/Tband_),2) );
-
+	const scalar cp = pos(T-TSpike)*cpG + neg(T-TSpike)*cpL
+	                  + cpSpike1*exp(-1.0 * pow( (T-TSpike)/SpikeWidth1, 2) )
+	                  + cpSpike2*exp(-1.0 * pow( (T-TSpike)/SpikeWidth2, 2) )
+	                  + cpSpike3*exp(-1.0 * pow( (T-TSpike)/SpikeWidth3, 2) )
+	                  + cpSpike4*exp(-1.0 * pow( (T-TSpike)/SpikeWidth4, 2) );
     return cp;
+    
+    
+    //return cpG;
 }
 
 
@@ -132,11 +152,15 @@ inline Foam::scalar Foam::superH<equationOfState>::ha
     const scalar p, const scalar T
 ) const
 {
-    const scalar c = cpVF_/Tband_;
-    const scalar B = SpikeWidth_/Tband_;
-    const scalar H_main = cpL_*T + (cpL_ - cpG_)*Foam::log( Foam::exp(2*c*T) + 1 )/(2*c);
-    const scalar H_spike = TSpike_*Foam::atan(B*T)/B;
-    return (H_main + H_spike);
+    return
+    (
+          pos(T - TSpike)*cpG*(T - TSpike)
+        + neg(T - TSpike)*cpL*(T - TSpike)
+        - (sqrt(3.141592)*cpSpike1*SpikeWidth1/2.0)*erf((TSpike-T)/SpikeWidth1)
+        - (sqrt(3.141592)*cpSpike2*SpikeWidth2/2.0)*erf((TSpike-T)/SpikeWidth2)
+        - (sqrt(3.141592)*cpSpike3*SpikeWidth3/2.0)*erf((TSpike-T)/SpikeWidth3)
+        - (sqrt(3.141592)*cpSpike4*SpikeWidth4/2.0)*erf((TSpike-T)/SpikeWidth4)
+    );
 }
 
 
@@ -187,13 +211,13 @@ inline void Foam::superH<equationOfState>::operator+=
 
     molr1 /= this->nMoles();
     scalar molr2 = ct.nMoles()/this->nMoles();
-
-    cpL_    = molr1*cpL_ + molr2*ct.cpL_;
-    cpG_    = molr1*cpG_ + molr2*ct.cpG_;
-    cpVF_   = molr1*cpVF_ + molr2*ct.cpVF_;
-    TSpike_ = molr1*TSpike_ + molr2*ct.TSpike_;
-    SpikeWidth_ = molr1*SpikeWidth_ + molr2*ct.SpikeWidth_;
-    Tband_ = molr1*Tband_ + molr2*ct.Tband_;
+    Info<< "Mixture case... Not applicable for this thermo model 1" << endl;
+//    cpL_    = molr1*cpL_ + molr2*ct.cpL_;
+//    cpG_    = molr1*cpG_ + molr2*ct.cpG_;
+//    cpVF_   = molr1*cpVF_ + molr2*ct.cpVF_;
+//    TSpike_ = molr1*TSpike_ + molr2*ct.TSpike_;
+//    SpikeWidth_ = molr1*SpikeWidth_ + molr2*ct.SpikeWidth_;
+//    Tband_ = molr1*Tband_ + molr2*ct.Tband_;
 }
 
 
@@ -209,13 +233,13 @@ inline void Foam::superH<equationOfState>::operator-=
 
     molr1 /= this->nMoles();
     scalar molr2 = ct.nMoles()/this->nMoles();
-
-    cpL_    = molr1*cpL_ - molr2*ct.cpL_;
-    cpG_    = molr1*cpG_ - molr2*ct.cpG_;
-    cpVF_   = molr1*cpVF_ - molr2*ct.cpVF_;
-    TSpike_ = molr1*TSpike_ - molr2*ct.TSpike_;
-    SpikeWidth_ = molr1*SpikeWidth_ - molr2*ct.SpikeWidth_;
-    Tband_ = molr1*Tband_ - molr2*ct.Tband_;
+    Info<< "Mixture case... Not applicable for this thermo model 2" << endl;
+//    cpL_    = molr1*cpL_ - molr2*ct.cpL_;
+//    cpG_    = molr1*cpG_ - molr2*ct.cpG_;
+//    cpVF_   = molr1*cpVF_ - molr2*ct.cpVF_;
+//    TSpike_ = molr1*TSpike_ - molr2*ct.TSpike_;
+//    SpikeWidth_ = molr1*SpikeWidth_ - molr2*ct.SpikeWidth_;
+//    Tband_ = molr1*Tband_ - molr2*ct.Tband_;
 }
 
 
@@ -233,22 +257,36 @@ inline Foam::superH<equationOfState> Foam::operator+
         static_cast<const equationOfState&>(ct1)
       + static_cast<const equationOfState&>(ct2)
     );
+    
+    Info<< "Mixture case... Not applicable for this thermo model 3" << endl;
 
     return superH<equationOfState>
     (
         eofs,
-        ct1.nMoles()/eofs.nMoles()*ct1.CpL_
-      + ct2.nMoles()/eofs.nMoles()*ct2.CpL_,
-        ct1.nMoles()/eofs.nMoles()*ct1.CpG_
-      + ct2.nMoles()/eofs.nMoles()*ct2.CpG_,
-        ct1.nMoles()/eofs.nMoles()*ct1.CpVF_
-      + ct2.nMoles()/eofs.nMoles()*ct2.CpVF_,
-        ct1.nMoles()/eofs.nMoles()*ct1.TSpike_
-      + ct2.nMoles()/eofs.nMoles()*ct2.TSpike_,
-        ct1.nMoles()/eofs.nMoles()*ct1.SpikeWidth_
-      + ct2.nMoles()/eofs.nMoles()*ct2.SpikeWidth_,
-        ct1.nMoles()/eofs.nMoles()*ct1.Tband_
-      + ct2.nMoles()/eofs.nMoles()*ct2.Tband_
+        ct1.nMoles()/eofs.nMoles()*ct1.CpL,
+        ct1.nMoles()/eofs.nMoles()*ct1.CpG,
+        ct1.TSpike,
+        ct1.SpikeWidth1,
+        ct1.nMoles()/eofs.nMoles()*ct1.cpSpike1,
+        ct1.SpikeWidth2,
+        ct1.nMoles()/eofs.nMoles()*ct1.cpSpike2,
+        ct1.SpikeWidth3,
+        ct1.nMoles()/eofs.nMoles()*ct1.cpSpike3,
+        ct1.SpikeWidth4,
+        ct1.nMoles()/eofs.nMoles()*ct1.cpSpike4
+        
+//        ct1.nMoles()/eofs.nMoles()*ct1.CpL_
+//      + ct2.nMoles()/eofs.nMoles()*ct2.CpL_,
+//        ct1.nMoles()/eofs.nMoles()*ct1.CpG_
+//      + ct2.nMoles()/eofs.nMoles()*ct2.CpG_,
+//        ct1.nMoles()/eofs.nMoles()*ct1.CpVF_
+//      + ct2.nMoles()/eofs.nMoles()*ct2.CpVF_,
+//        ct1.nMoles()/eofs.nMoles()*ct1.TSpike_
+//      + ct2.nMoles()/eofs.nMoles()*ct2.TSpike_,
+//        ct1.nMoles()/eofs.nMoles()*ct1.SpikeWidth_
+//      + ct2.nMoles()/eofs.nMoles()*ct2.SpikeWidth_,
+//        ct1.nMoles()/eofs.nMoles()*ct1.Tband_
+//      + ct2.nMoles()/eofs.nMoles()*ct2.Tband_
     );
 }
 
@@ -265,22 +303,35 @@ inline Foam::superH<equationOfState> Foam::operator-
         static_cast<const equationOfState&>(ct1)
       - static_cast<const equationOfState&>(ct2)
     );
-
+    
+    Info<< "Mixture case... Not applicable for this thermo model 4" << endl;
+    
     return superH<equationOfState>
     (
         eofs,
-        ct1.nMoles()/eofs.nMoles()*ct1.CpL_
-      - ct2.nMoles()/eofs.nMoles()*ct2.CpL_,
-        ct1.nMoles()/eofs.nMoles()*ct1.CpG_
-      - ct2.nMoles()/eofs.nMoles()*ct2.CpG_,
-        ct1.nMoles()/eofs.nMoles()*ct1.CpVF_
-      - ct2.nMoles()/eofs.nMoles()*ct2.CpVF_,
-        ct1.nMoles()/eofs.nMoles()*ct1.TSpike_
-      - ct2.nMoles()/eofs.nMoles()*ct2.TSpike_,
-        ct1.nMoles()/eofs.nMoles()*ct1.SpikeWidth_
-      - ct2.nMoles()/eofs.nMoles()*ct2.SpikeWidth_,
-        ct1.nMoles()/eofs.nMoles()*ct1.Tband_
-      - ct2.nMoles()/eofs.nMoles()*ct2.Tband_
+        ct1.nMoles()/eofs.nMoles()*ct1.CpL,
+        ct1.nMoles()/eofs.nMoles()*ct1.CpG,
+        ct1.TSpike,
+        ct1.SpikeWidth1,
+        ct1.nMoles()/eofs.nMoles()*ct1.cpSpike1,
+        ct1.SpikeWidth2,
+        ct1.nMoles()/eofs.nMoles()*ct1.cpSpike2,
+        ct1.SpikeWidth3,
+        ct1.nMoles()/eofs.nMoles()*ct1.cpSpike3,
+        ct1.SpikeWidth4,
+        ct1.nMoles()/eofs.nMoles()*ct1.cpSpike4
+//        ct1.nMoles()/eofs.nMoles()*ct1.CpL_
+//      - ct2.nMoles()/eofs.nMoles()*ct2.CpL_,
+//        ct1.nMoles()/eofs.nMoles()*ct1.CpG_
+//      - ct2.nMoles()/eofs.nMoles()*ct2.CpG_,
+//        ct1.nMoles()/eofs.nMoles()*ct1.CpVF_
+//      - ct2.nMoles()/eofs.nMoles()*ct2.CpVF_,
+//        ct1.nMoles()/eofs.nMoles()*ct1.TSpike_
+//      - ct2.nMoles()/eofs.nMoles()*ct2.TSpike_,
+//        ct1.nMoles()/eofs.nMoles()*ct1.SpikeWidth_
+//      - ct2.nMoles()/eofs.nMoles()*ct2.SpikeWidth_,
+//        ct1.nMoles()/eofs.nMoles()*ct1.Tband_
+//      - ct2.nMoles()/eofs.nMoles()*ct2.Tband_
     );
 }
 
@@ -295,12 +346,22 @@ inline Foam::superH<equationOfState> Foam::operator*
     return superH<equationOfState>
     (
         s*static_cast<const equationOfState&>(ct),
-        ct.cpL_,
-        ct.cpG_,
-        ct.cpVF_,
-        ct.TSpike_,
-        ct.SpikeWidth_,
-        ct.Tband_
+        ct.cpL,
+        ct.cpG,
+        ct.TSpike,
+        ct.SpikeWidth1,
+        ct.cpSpike1,
+        ct.SpikeWidth2,
+        ct.cpSpike2,
+        ct.SpikeWidth3,
+        ct.cpSpike3,
+        ct.SpikeWidth4,
+        ct.cpSpike4
+//        ct.cpG_,
+//        ct.cpVF_,
+//        ct.TSpike_,
+//        ct.SpikeWidth_,
+//        ct.Tband_
     );
 }
 

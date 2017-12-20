@@ -22,9 +22,11 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 \*---------------------------------------------------------------------------*/
-
+#include "compressibleTransportModel.H"
 #include "rhoThermo.H"
+#include "psiThermo.H"
 #include "makeThermo.H"
+
 
 #include "specie.H"
 #include "hConstThermo.H"
@@ -32,12 +34,19 @@ License
 #include "thermo.H"
 
 #include "constTransport.H"
-
+#include "superTransport/superTransport.H"
+#include "sutherlandTransport.H"
+#include "PengRobinsonGas.H"
+#include "PengRobinsonGasPConst/PengRobinsonGasPConst.H"
+#include "rhoConst.H"
 #include "superEOS/superEOS.H"
 #include "superH/superH.H"
 
+
 #include "heRhoThermo.H"
+#include "hePsiThermo.H"
 #include "pureMixture.H"
+#include "icoPolynomial.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -46,17 +55,6 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-makeThermo
-(
-    rhoThermo,
-    heRhoThermo,
-    pureMixture,
-    constTransport,
-    sensibleEnthalpy,
-    hConstThermo,
-    superEOS,
-    specie
-);
 
 makeThermo
 (
@@ -66,11 +64,86 @@ makeThermo
     constTransport,
     sensibleEnthalpy,
     superH,
-    superEOS,
+    PengRobinsonGas,
+    specie
+);
+
+makeThermo
+(
+    rhoThermo,
+    heRhoThermo,
+    pureMixture,
+    superTransport,
+    sensibleEnthalpy,
+    superH,
+    rhoConst,
     specie
 );
 
 
+makeThermo
+(
+    rhoThermo,
+    heRhoThermo,
+    pureMixture,
+    superTransport,
+    sensibleEnthalpy,
+    superH,
+    PengRobinsonGas,
+    specie
+);
+
+makeThermo
+(
+    rhoThermo,
+    heRhoThermo,
+    pureMixture,
+    sutherlandTransport,
+    sensibleEnthalpy,
+    superH,
+    PengRobinsonGas,
+    specie
+);
+
+
+makeThermo
+(
+    rhoThermo,
+    heRhoThermo,
+    pureMixture,
+    superTransport,
+    sensibleEnthalpy,
+    superH,
+    PengRobinsonGasPConst,
+    specie
+);
+
+
+
+makeThermo
+(
+    psiThermo,
+    hePsiThermo,
+    pureMixture,
+    superTransport,
+    sensibleEnthalpy,
+    superH,
+    PengRobinsonGas,
+    specie
+);
+
+
+makeThermo
+(
+    rhoThermo,
+    heRhoThermo,
+    pureMixture,
+    superTransport,
+    sensibleEnthalpy,
+    superH,
+    icoPolynomial,
+    specie
+);
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
