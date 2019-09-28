@@ -1,0 +1,100 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  plus                                  |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      topoSetDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+actions
+(
+    // Microchannel (Fluid domain)
+    {
+        name    fluidCellSet;
+        type    cellSet;
+        action  new;
+        source  boxToCell;
+        sourceInfo
+        {
+            box (0 0 0 )(1E-3 0.75E-3 4E-3); 
+        }
+    }
+    {
+        name    fluidCellSet;
+        type    cellSet;
+        action  delete;
+        source  boxToCell;
+        sourceInfo
+        {
+            boxes ( 	
+			(0.275E-3  0  0.775E-3)(0.725E-3  0.75E-3   1.225E-3)
+			(0.275E-3  0  2.775E-3)(0.725E-3  0.75E-3   3.225E-3)
+		  );
+        }
+    }
+    {
+        name    fluid;
+        type    cellZoneSet;
+        action  new;
+        source  setToCellZone;
+        sourceInfo
+        {
+            set fluidCellSet;
+        }
+    }
+
+    // Pin-fin 1 (a solid square domain inside the microchannel)
+    {
+        name    PinCellSet;
+        type    cellSet;
+        action  new;
+        source  boxToCell;
+        sourceInfo
+        {
+            box    (0.275E-3  0  0.775E-3)(0.725E-3  0.75E-3   1.225E-3);
+        }
+    }
+    {
+        name    Pin1;
+        type    cellZoneSet;
+        action  new;
+        source  setToCellZone;
+        sourceInfo
+        {
+            set PinCellSet;
+        }
+    }
+    // Pin-fin 2 (a solid square domain inside the microchannel)
+    {
+        name    PinCellSet;
+        type    cellSet;
+        action  new;
+        source  boxToCell;
+        sourceInfo
+        {
+            box  (0.275E-3  0  2.775E-3)(0.725E-3  0.75E-3   3.225E-3); 
+        }
+    }
+    {
+        name    Pin2;
+        type    cellZoneSet;
+        action  new;
+        source  setToCellZone;
+        sourceInfo
+        {
+            set PinCellSet;
+        }
+    }
+);
+
+
+// ************************************************************************* //

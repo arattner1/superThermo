@@ -1,0 +1,244 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  plus                                  |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     buoyantPimpleFoam_GAdaptCyc;
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         0.12; 
+
+deltaT          1E-6;
+
+writeControl    adjustableRunTime; 
+writeInterval   0.01;
+
+purgeWrite      0;
+
+writeFormat     binary;//ascii;
+
+writePrecision  6;
+
+writeCompression on;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable true;
+
+
+adjustTimeStep  yes;
+maxCo          0.4;
+
+functions
+{
+
+    	timeStep
+	{
+		type            coded;
+		libs            ("libutilityFunctionObjects.so");
+		name            OutputInfo;
+
+        code
+        #{
+        #};
+
+        codeExecute
+        #{
+		
+		//***********************************************************************
+		//First get t and dt
+			scalar t = mesh().time().value();
+			scalar dt = mesh().time().deltaTValue();
+            //***********************************************************************
+            //Get DeltaP
+			const fvBoundaryMesh& bMesh = mesh().boundary();
+			//Next get in/out patches:
+			const label InletPatchID   = bMesh.findPatchID("Inlet");
+			const label OutletPatchID  = bMesh.findPatchID("Outlet");
+			const fvPatch& InletPatch  = bMesh[InletPatchID];
+			const fvPatch& OutletPatch = bMesh[OutletPatchID];
+
+			const volScalarField& gradPField = mesh().lookupObject<volScalarField>("gradPField");
+                        const scalarField gradPValF = gradPField.internalField();
+                 	const scalar gradPVal = max(gradPValF);
+
+            //Cell face areas
+			const scalarField& Af_In   = InletPatch.magSf();
+			const scalarField& Af_Out  = OutletPatch.magSf();
+            //***********************************************************************
+            //Get U
+			const volVectorField& U = mesh().lookupObject<volVectorField>("U");
+			const vector U_avg_vec  = gSum( mesh().V() * U.primitiveField() ) / gSum( mesh().V() );
+			
+			const scalar U_avg = mag(U_avg_vec[2]);
+            //***********************************************************************
+            //Get average heat flux on walls
+			//Next get wall patches:
+			const label WallPatchIDB  = bMesh.findPatchID("BottWall");
+			const label WallPatchIDT  = bMesh.findPatchID("TopWall");
+
+			const fvPatch& WallPatchB = bMesh[WallPatchIDB];
+			const fvPatch& WallPatchT = bMesh[WallPatchIDT];
+
+			//Get temp gradient on the wall
+			const volScalarField& h = mesh().lookupObject<volScalarField>("h");  //[J/kg]
+			const volScalarField& alphaSgs = mesh().lookupObject<volScalarField>("alphat");    //[kg/(m.s)]
+			const volScalarField& alpha = mesh().lookupObject<volScalarField>("thermo:alpha");
+			const surfaceScalarField alphaEff= fvc::interpolate( alphaSgs + alpha );
+
+			const surfaceScalarField q = alphaEff * fvc::snGrad(h);   //[W/m^2]
+
+			//Calculate q at different walls of microchannel [W]
+			const scalar qWallT = gSum( q.boundaryField()[WallPatchIDT]*WallPatchT.magSf() );
+			const scalar qWallB = gSum( q.boundaryField()[WallPatchIDB]*WallPatchB.magSf() );
+
+			//Cell face areas of different walls of microchannel [m^2]
+			const scalar AfT = gSum( WallPatchT.magSf() ); 
+			const scalar AfB = gSum( WallPatchB.magSf() );
+
+			//Average heat flux at different walls, separately [W/m^2]
+			const scalar WallFluxT = qWallT / AfT;
+			const scalar WallFluxB = qWallB / AfB;
+			//Average wall heat flux on all four walls, altogether [W/m^2]
+			const scalar WallFlux_avg = (WallFluxT + WallFluxB)/2.0;
+            //***********************************************************************
+            //Get mass flux (at the outlet) [kg/(m^2.s)]
+			const volScalarField& rho = mesh().lookupObject<volScalarField>("rho");
+			const scalarField rho_Out    = rho.boundaryField()[OutletPatchID];
+			const fvPatchVectorField& U_Out    = U.boundaryField()[OutletPatchID];
+			const scalarField U_Out3 = mag(U_Out.component(2));
+			const scalar G        = gSum(rho_Out*U_Out3*Af_Out)/gSum(Af_Out);
+            //***********************************************************************
+            //Get Tf_in_avg, average inlet fluid temperature [K]
+			const volScalarField& T = mesh().lookupObject<volScalarField>("T");
+			const scalarField T_In    = T.boundaryField()[InletPatchID];
+			const scalarField rho_In    = rho.boundaryField()[InletPatchID];
+			const fvPatchVectorField& U_In    = U.boundaryField()[InletPatchID];
+			const scalarField U_In3 = mag(U_In.component(2));
+			const scalar Tf_in_avg        = gSum(rho_In*U_In3*T_In*Af_In)/gSum(rho_In*U_In3*Af_In);
+            //***********************************************************************
+            //Get hbulk, first approach, will be used to calculate Tbulk in EES
+                       	const vector h_b_n     =    gSum( mesh().V() * rho.internalField() * h.internalField() * U.primitiveField());
+                        const vector h_b_d     =    gSum( mesh().V() * rho.internalField()  * U.primitiveField());
+                        const scalar h_b_avg_mfr = h_b_n[2]/h_b_d[2];	//mass-flow-rate-based averaged enthalpy of the bulk flow [J/kg]	
+                	//***********************************************************************
+			//Finally print out results:
+			//Now write out data:
+			if( Pstream::master() == true )
+			{
+				std::ofstream fs;
+				fs.open ("/oasis/scratch/comet/mnabil/temp_project/Case_1.1_300_H3_PP_Fine/OutputData_300_H3_PP_Fine.dat", std::fstream::app);
+				fs.precision(7);
+				fs << t << "\t" << dt << "\t" << U_avg << "\t" << G << "\t" << Tf_in_avg << "\t" << h_b_avg_mfr << "\t" << WallFluxT << "\t" << WallFluxB << "\t" << WallFlux_avg <<"\n" ;
+				fs.close();
+			//***********************************************************************
+				 std::ofstream file;
+				 file.open ("/oasis/scratch/comet/mnabil/temp_project/Case_1.1_300_H3_PP_Fine/GradP_300_H3_PP_Fine.txt", std::ofstream::app);
+				 file << t << "\t" << gradPVal << "\n";
+				 file.close();
+			}
+		#}; 
+
+		codeInclude
+		#{
+			#include <fstream>
+		#};
+	}
+	
+	
+	
+	fieldAverage1
+    {
+        type            fieldAverage;
+        libs            ("libfieldFunctionObjects.so");
+        writeControl    writeTime;
+
+        fields
+        (
+            U
+            {
+                mean        on;
+                prime2Mean  on;
+                base        time;
+            }
+
+            p
+            {
+                mean        on;
+                prime2Mean  on;
+                base        time;
+            }
+        );
+    }
+
+	turbulenceFields1
+	{
+	    type            turbulenceFields;
+	    libs            ("libfieldFunctionObjects.so");
+	    fields          (k epsilon omega R mut muEff alphaEff devRhoReff);
+            writeControl    writeTime;
+	}
+
+    	Q1
+	{
+            type            Q;
+            libs            ("libfieldFunctionObjects.so");
+            // Optional entries
+            writeControl    writeTime;
+            field           U;
+            result          Q;
+        }
+
+	wallShearStress1
+	{
+            type            wallShearStress;
+            libs            ("libfieldFunctionObjects.so");
+            writeControl    writeTime;
+        }
+
+	vorticity1
+	{
+            type            vorticity;
+            libs            ("libfieldFunctionObjects.so");
+            writeControl    writeTime;
+        }
+    
+
+    writeObjects1
+    {
+        type        writeObjects;
+        libs        ("libutilityFunctionObjects.so");
+        objects     (rho);
+        writeControl    writeTime;
+    }
+    
+}
+
+libs ( "libspecie.so"
+       "libfluidThermophysicalModels.so"
+       "libsuperThermoFinal.so"
+       "libutilityFunctionObjects.so"
+       "libOpenFOAM.so"
+       "libfvOptions.so"
+                           );
+
+// ************************************************************************* //

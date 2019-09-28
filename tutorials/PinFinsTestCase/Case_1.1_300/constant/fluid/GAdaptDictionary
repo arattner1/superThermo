@@ -1,0 +1,29 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.0                                   |
+|   \\  /    A nd           | Web:      http://www.openfoam.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+    instance        "constant";
+    class           dictionary;
+    object          GAdaptDictionary;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+// Target mass flux (adjust p_rgh inlet value to reach this parameter, units of kg/m^2-s)
+// Note: in pin-fins cases, you should start the simulation with a high mass flux, e.g. 1000 kg/m^2-s, 
+// and gradually decrease it to your target value after startup, e.g., by increments of 200 kg/m^2-s after each 30 time steps
+Gbar 328;
+
+//How much to over-relax correction
+Relaxation 1.0;
+
+// ************************************************************************* //
