@@ -1,6 +1,6 @@
 #!/bin/bash
  
-#Build script for thermophysical libraries of supercritical carbon dioxide 
+#Build script for thermophysical properties library of supercritical carbon dioxide 
 wmake libso superThermoFinal
 
 #Build script for buoyantPimpleFoam_GAdaptCyc
