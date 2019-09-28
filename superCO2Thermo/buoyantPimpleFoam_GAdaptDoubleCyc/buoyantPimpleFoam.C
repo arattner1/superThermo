@@ -28,8 +28,8 @@ Group
     grpHeatTransferSolvers
 
 Description
-    Transient solver for buoyant, turbulent flow of compressible fluids for
-    ventilation and heat-transfer.
+    Transient solver for buoyant, turbulent supercritical flow of compressible fluids for
+    ventilation and heat-transfer with double-cyclic boundary conditions.
 
     Turbulence is modelled using a run-time selectable compressible RAS or
     LES model.

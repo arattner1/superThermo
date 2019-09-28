@@ -28,8 +28,8 @@ Group
     grpHeatTransferSolvers
 
 Description
-    Transient solver for buoyant, turbulent fluid flow and solid heat
-    conduction with conjugate heat transfer between solid and fluid regions.
+    Transient solver for buoyant, turbulent supercritical fluid flow and solid heat
+    conduction with conjugate heat transfer between solid and fluid regions with cyclic inlet-outlet boundary conditions.
 
     It handles secondary fluid or solid circuits which can be coupled
     thermally with the main fluid region. i.e radiators, etc.
