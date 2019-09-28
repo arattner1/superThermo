@@ -1,4 +1,4 @@
-# interThermalPhaseChangeFoam
+# superCO2Thermo
 CFD simulation platform for high-heat-flux turbulent supercritical CO2 flow 
 
 Copyright 2019: Mahdi Nabil, Alexander S Rattner
