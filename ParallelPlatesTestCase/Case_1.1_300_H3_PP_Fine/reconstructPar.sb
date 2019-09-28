@@ -1,0 +1,29 @@
+#!/bin/bash
+#SBATCH --job-name="RecF300H3"        # Job Name
+#SBATCH --output="Foam.ReconsF300H3.%j.%N.txt" # Output filename
+#SBATCH --partition=compute          # Queue (partition) name
+#SBATCH --nodes=1                    # Number of nodes  
+#SBATCH --ntasks-per-node=24         # Number of tasks per node 
+#SBATCH --export=ALL         
+#SBATCH -t 24:00:00                  # Run time (hh:mm:ss) 
+
+## Change to local scratch and run
+cd /scratch/$USER/$SLURM_JOBID
+
+## Untar all the node files
+for NODEF in `ls $SLURM_SUBMIT_DIR/node*tar` ; do tar -xf $NODEF; done
+
+## Copy in rest of the needed files
+cp -r $SLURM_SUBMIT_DIR/0 .
+cp -r $SLURM_SUBMIT_DIR/constant .
+cp -r $SLURM_SUBMIT_DIR/system .
+
+## Set up OpenFOAM environment
+source /home/mnabil/OpenFOAM/OpenFOAM-v1612+/etc/bashrc 
+
+reconstructPar -latestTime
+
+mv 0 zero
+for RECONDIR in `ls | grep -v proc| grep -v system|grep -v zero | grep -v cons`;do
+cp -r $RECONDIR $SLURM_SUBMIT_DIR/
+done

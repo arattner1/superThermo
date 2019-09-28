@@ -1,0 +1,44 @@
+#!/bin/bash
+#SBATCH --job-name="Fr500H33"     # Job Name
+#SBATCH --output="Foam500FrH33.%j.%N.txt" # Output filename
+#SBATCH --partition=compute        # Queue (partition) name
+#SBATCH --nodes=8               # Number of nodes  
+#SBATCH --ntasks-per-node=24      # Number of tasks per node 
+#SBATCH --export=ALL         
+#SBATCH -t 48:00:00               # Run time (hh:mm:ss) 
+
+## Nodefiles
+export SLURM_NODEFILE=`generate_pbs_nodefile`
+cat $SLURM_NODEFILE > nodes.list.$SLURM_JOBID
+uniq nodes.list.$SLURM_JOBID > nodes.unq.list
+
+## Timeout value after which run is stopped and files copied back
+export WAITVAL=2800m
+
+#Copy needed files to scratch and launch the copyback scripts
+for (( nn=1; nn<=$SLURM_NNODES; nn++ ))
+ do 
+   p="`sed -n ${nn}p nodes.unq.list`"
+   ssh $p $SLURM_SUBMIT_DIR/copytoscratch.sh /scratch/$USER/$SLURM_JOBID $SLURM_SUBMIT_DIR $nn &
+ done
+wait
+mkdir -p BACKtars
+mv node*tar BACKtars/
+
+## Change to local scratch and run
+cd /scratch/$USER/$SLURM_JOBID
+
+## Set up OpenFOAM environment
+source /home/mnabil/OpenFOAM/OpenFOAM-v1612+/etc/bashrc
+
+## Run the job
+timeout $WAITVAL mpirun -x PATH -x LD_LIBRARY_PATH -hostfile $SLURM_NODEFILE -np $SLURM_NTASKS `which buoyantPimpleFoam_GAdaptCyc` -parallel
+
+## Copyback files
+cd $SLURM_SUBMIT_DIR
+for (( nn=1; nn<=$SLURM_NNODES; nn++ ))
+ do 
+   p="`sed -n ${nn}p nodes.unq.list`"
+   ssh $p $SLURM_SUBMIT_DIR/copyback.sh /scratch/$USER/$SLURM_JOBID $SLURM_SUBMIT_DIR $nn &
+ done
+wait
