@@ -1,7 +1,9 @@
 #!/bin/bash
  
-#Build script for buoyantPimpleFoam_GAdaptCyc
+#Build script for thermophysical libraries of supercritical carbon dioxide 
 wmake libso superThermoFinal
+
+#Build script for buoyantPimpleFoam_GAdaptCyc
 wmake buoyantPimpleFoam_GAdaptCyc
 
 #Build script for buoyantPimpleFoam_GAdaptDoubleCyc
